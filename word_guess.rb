@@ -7,21 +7,22 @@
 # The updated program should read the csv and select a random word from the appropriate difficulty.
 # No other gameplay changes are required.
 
+require 'csv'
 
 class WordGuess
   def initialize(debug = false)
     # are we in debug mode?
     @debug = true #debug
 
-    # possible words, selected at random below (right now on row 36)
-    @words = {
-      "e" => %w(dog cat bug hat cap lit kin fan fin fun tan ten tin ton),
-      "m" => %w(plain claim brine crime alive bride skine drive slime stein jumpy),
-      "h" => %w(
-          machiavellian prestidigitation plenipotentiary quattuordecillion
-          magnanimous unencumbered bioluminescent circumlocution
-        )
-    }
+    # possible words, selected at random below (using .sample)
+    # @words = {
+    #   "e" => %w(dog cat bug hat cap lit kin fan fin fun tan ten tin ton),
+    #   "m" => %w(plain claim brine crime alive bride skine drive slime stein jumpy),
+    #   "h" => %w(
+    #       machiavellian prestidigitation plenipotentiary quattuordecillion
+    #       magnanimous unencumbered bioluminescent circumlocution
+    #     )
+    # }
 
     # players attempts allowed by difficulty
     @tries = {
@@ -31,9 +32,23 @@ class WordGuess
     }
 
     # ask the user to set the game mode
-    mode = set_mode # @todo whatever the csvfile[0] is called it is equal to mode
+    mode = set_mode
 
-    @word    = @words[mode].sample # chosen word; players try to guess this
+    if mode == 'm'
+      @words_ary = CSV.read('words.csv')[0]  # for m #medium
+    elsif mode == 'e'
+      @words_ary = CSV.read('words.csv')[1] # for e #easy
+    elsif mode == 'h'
+      @words_ary = CSV.read('words.csv')[2] # for h #hard
+    else
+      puts "Error in set_mode"
+    end
+
+    @word = @words_ary[1...(@words_ary.length)].sample
+    puts "The Easy array contains the word? True/False: #{CSV.read('words.csv')[1].include?(@word)}"
+    puts "The Medium array contains the word? True/False: #{CSV.read('words.csv')[0].include?(@word)}"
+    puts "The Hard array contains the word? True/False: #{CSV.read('words.csv')[2].include?(@word)}"
+    #@word    = @words[mode].sample # chosen word; players try to guess this
     @guesses = @tries[mode] # how many tries the player gets
     @user_word = "•" * @word.length # a "blank word" for user output
     @guessed = [] # keep track of letters that have been guessed
@@ -114,6 +129,7 @@ class WordGuess
     end
   end
 
+  #added change here, optional to myself
   def set_mode
     mode = ""
     until %w(e m h easy medium hard).include? mode
