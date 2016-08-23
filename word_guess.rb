@@ -1,9 +1,19 @@
+# @todo Requirements
+# Alter the game to get its words from the provided words.csv.
+# The CSV has three lines. The first entry on each line is the difficulty and every other entry is a word for that difficulty.
+# Example: e,cat,hat,bat,rat,sat,wat,nat,mat....
+# The e is the difficulty (easy mode).
+# Everything else is a word for the easy difficulty
+# The updated program should read the csv and select a random word from the appropriate difficulty.
+# No other gameplay changes are required.
+
+
 class WordGuess
   def initialize(debug = false)
     # are we in debug mode?
-    @debug = debug
+    @debug = true #debug
 
-    # possible words, selected at random
+    # possible words, selected at random below (right now on row 36)
     @words = {
       "e" => %w(dog cat bug hat cap lit kin fan fin fun tan ten tin ton),
       "m" => %w(plain claim brine crime alive bride skine drive slime stein jumpy),
@@ -21,7 +31,7 @@ class WordGuess
     }
 
     # ask the user to set the game mode
-    mode = set_mode
+    mode = set_mode # @todo whatever the csvfile[0] is called it is equal to mode
 
     @word    = @words[mode].sample # chosen word; players try to guess this
     @guesses = @tries[mode] # how many tries the player gets
@@ -106,9 +116,9 @@ class WordGuess
 
   def set_mode
     mode = ""
-    until %w(e m h).include? mode
+    until %w(e m h easy medium hard).include? mode
       print "\nThis can be (e)asy, (m)edium or really (h)ard. The choice is yours: "
-      mode = gets.chomp
+      mode = gets.chomp[0].downcase
     end
 
     mode
